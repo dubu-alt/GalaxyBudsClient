@@ -436,7 +436,9 @@ namespace GalaxyBudsClient.Model
             [LocalizableDescription(Keys.SettingsDynTrayModeBatteryMin)]
             BatteryMin = 1,
             [LocalizableDescription(Keys.SettingsDynTrayModeBatteryAvg)]
-            BatteryAvg = 2
+            BatteryAvg = 2,
+            [LocalizableDescription(Keys.SettingsDynTrayModeBatteryLeftRight)]
+            BatteryLeftRight = 3
         }
 
         [CompiledEnum]
