@@ -62,19 +62,35 @@ public static class WindowIconRenderer
 
     private static WindowIcon MakeFromBatteryLevel(int level)
     {
+        const double size = 256;
+        const double padding = 12;
+
         // Create the formatted text based on the properties set.
         var formattedText = new FormattedText(
             $"{level}",
             CultureInfo.CurrentCulture,
             FlowDirection.LeftToRight,
-            Typeface.Default,
+            new Typeface(Typeface.Default.FontFamily, FontStyle.Normal, FontWeight.SemiBold),
             210,
             Brushes.Black // This brush does not matter since we use the geometry of the text.
         );
 
         // Build the geometry object that represents the text.
-        var textGeometry = formattedText.BuildGeometry(new Point(0, -30));
-        var render = new RenderTargetBitmap(new PixelSize(256, 256), new Vector(96, 96));
+        var textGeometry = formattedText.BuildGeometry(new Point(0, 0));
+        if (textGeometry == null)
+            return DefaultIcon;
+
+        // Fit the text into the canvas based on its real bounds instead of a fixed offset.
+        // Font metrics differ between platforms (e.g. SF on macOS), which previously caused
+        // two-digit values to be clipped in the macOS menu bar.
+        var bounds = textGeometry.Bounds;
+        var scale = Math.Min((size - padding * 2) / bounds.Width, (size - padding * 2) / bounds.Height);
+        var transform =
+            Matrix.CreateTranslation(-(bounds.X + bounds.Width / 2), -(bounds.Y + bounds.Height / 2)) *
+            Matrix.CreateScale(scale, scale) *
+            Matrix.CreateTranslation(size / 2, size / 2);
+
+        var render = new RenderTargetBitmap(new PixelSize((int)size, (int)size), new Vector(96, 96));
 
         using (var ctx = render.CreateDrawingContext())
         {
@@ -86,11 +102,14 @@ public static class WindowIconRenderer
                 RequiresFullOpacityHandling = true
             });
 
-
-            if(PlatformUtils.IsOSX)
-                ctx.DrawGeometry(Brushes.Black, new Pen(Brushes.Transparent, 0), textGeometry!);
-            else
-                ctx.DrawGeometry(new SolidColorBrush(Settings.Data.AccentColor), new Pen(Brushes.Transparent, 0), textGeometry!);
+            using (ctx.PushTransform(transform))
+            {
+                // OSX uses templated (black) icons
+                IBrush brush = PlatformUtils.IsOSX
+                    ? (IBrush)Brushes.Black
+                    : new SolidColorBrush(Settings.Data.AccentColor);
+                ctx.DrawGeometry(brush, new Pen(Brushes.Transparent, 0), textGeometry);
+            }
         }
 
         return new WindowIcon(render);
