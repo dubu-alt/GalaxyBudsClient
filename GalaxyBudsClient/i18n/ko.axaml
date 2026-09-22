@@ -825,6 +825,7 @@ X축이나 Y축 위에 마우스를 올린 상태에서 스크롤하면 해당 �
     <sys:String x:Key="settings_dyn_tray_mode_off">끄기</sys:String>
     <sys:String x:Key="settings_dyn_tray_mode_battery_min">가장 낮은 배터리 잔량 표시</sys:String>
     <sys:String x:Key="settings_dyn_tray_mode_battery_avg">평균 배터리 잔량 표시</sys:String>
+    <sys:String x:Key="settings_dyn_tray_mode_battery_left_right">왼쪽/오른쪽 배터리 잔량 표시</sys:String>
     <sys:String x:Key="settings_devmode_description">블루투스 트래픽 검사기 및 기타 개발자 도구</sys:String>
     <sys:String x:Key="settings_cpopup_position_description">연결 팝업의 위치를 선택해요.</sys:String>
     <sys:String x:Key="factory_confirmation">이어버드를 공장 초기화할까요?
